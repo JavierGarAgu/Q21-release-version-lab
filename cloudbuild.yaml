@@ -1,0 +1,34 @@
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+substitutions:
+  _REGION: "europe-west1"
+  _REPOSITORY: "release-images"
+  _IMAGE: "demo-app"
+
+steps:
+
+# ============================================
+# BUILD IMAGE
+# ============================================
+
+- name: gcr.io/cloud-builders/docker
+  id: Build Image
+  args:
+    - build
+    - -t
+    - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_IMAGE}:$TAG_NAME
+    - .
+
+# ============================================
+# PUSH IMAGE
+# ============================================
+
+- name: gcr.io/cloud-builders/docker
+  id: Push Image
+  args:
+    - push
+    - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_IMAGE}:$TAG_NAME
+
+images:
+  - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPOSITORY}/${_IMAGE}:$TAG_NAME
